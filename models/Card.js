@@ -12,7 +12,10 @@ class Card {
    * @return {number} different between two cards.
    */
   compareTo(card) {
-    return CARD_VALUES.indexOf(card.value) - CARD_VALUES.indexOf(this.value);
+    return (
+      Object.keys(CARD_VALUES).indexOf(card.value) -
+      Object.keys(CARD_VALUES).indexOf(this.value)
+    );
   }
 
   toString() {

@@ -2,6 +2,7 @@ const DeckFactory = require("../factories/DeckFactory");
 const Stack = require("../models/Stack");
 const ShedPlayer = require("../models/ShedPlayer");
 const Card = require("../models/Card");
+const { CARD_VALUES, SUIT_VALUES, MOVE_VALUES } = require("../lib/consts");
 
 class ShedGame {
   /**
@@ -21,6 +22,8 @@ class ShedGame {
       this.players[player] = new ShedPlayer();
     });
 
+    this.cardsInHand = 3;
+
     /** @type {string?} */
     this.activePlayer = null;
 
@@ -30,19 +33,17 @@ class ShedGame {
   _deal() {
     // choose how many cards per player
     // 6 for bottom layer, 3 for 5 players, 4 for 4 players, 5 for 3 or less players
-    let cardsPerPlayer = 6;
     let numberOfPlayers = this.playerList.length;
 
-    if (numberOfPlayers === 5) {
-      cardsPerPlayer += 3;
-    } else if (numberOfPlayers === 4) {
-      cardsPerPlayer += 4;
+    if (numberOfPlayers === 4) {
+      this.cardsInHand = 4;
     } else if (numberOfPlayers <= 3) {
-      cardsPerPlayer += 5;
+      this.cardsInHand = 5;
     }
 
-    // keep track of lowest card so we know who gets to play first
+    let cardsPerPlayer = 6 + this.cardsInHand;
 
+    // keep track of lowest card so we know who gets to play first
     let lowestCardPlayer = {
       card: new Card("D", "A"),
       player: this.playerList[0]
@@ -65,7 +66,14 @@ class ShedGame {
             };
           }
 
-          player.hand.addCards([card]);
+          // TODO: GET RID
+          if (i === this.playerList.length * 2) {
+            player.hand.addCards([
+              new Card(SUIT_VALUES["CLUB"], CARD_VALUES["10"])
+            ]);
+          } else {
+            player.hand.addCards([card]);
+          }
         }
       });
     }
@@ -77,6 +85,7 @@ class ShedGame {
   }
 
   _checkInPlayState() {
+    console.log(this.inPlay.top);
     if (
       this.inPlay.top.value === "10" ||
       (this.inPlay.depth >= 4 &&
@@ -87,12 +96,19 @@ class ShedGame {
       // burn
       this.burn.addCards(this.inPlay.cards);
       this.inPlay = new Stack();
+      return MOVE_VALUES.BURN;
     }
+
+    return null;
   }
 
   playCards(cards) {
     this.inPlay.addCards(cards);
-    this._checkInPlayState();
+    const moveType = this._checkInPlayState();
+
+    if (moveType !== MOVE_VALUES.BURN) {
+      this._nextPlayer();
+    }
   }
 
   takeCardFromDeck(player) {
@@ -113,7 +129,7 @@ class ShedGame {
     this.inPlay = new Stack();
   }
 
-  nextPlayer() {
+  _nextPlayer() {
     const playerIndex = this.playerList.indexOf(this.activePlayer);
 
     if (playerIndex === this.playerList.length - 1) {
@@ -126,14 +142,15 @@ class ShedGame {
   printGameState() {
     console.log("- Game State --------");
     console.log(`🔥 Burn Pile (${this.burn.depth} cards)`);
-    console.log(`🎯 In Play (${this.inPlay.depth} cards)`);
     console.log(`🃏 Deck (${this.deck.depth} cards)`);
-    console.log("");
+    console.log(`🎯 In Play (${this.inPlay.depth} cards)`);
+
     if (this.inPlay.depth > 0) {
-      console.log(`  Top Card: ${this.inPlay.top.toString()}`);
+      console.log(`    Top Card: ${this.inPlay.top.toString()}`);
     }
 
     console.log("");
+
     this.playerList.forEach(playerName => {
       const player = this.players[playerName];
 

@@ -14,9 +14,9 @@ class DeckFactory {
   constructNewDeck() {
     const deck = [];
 
-    CARD_VALUES.forEach(card => {
-      SUIT_VALUES.forEach(suit => {
-        deck.push(new Card(suit, card));
+    Object.keys(CARD_VALUES).forEach(card => {
+      Object.keys(SUIT_VALUES).forEach(suit => {
+        deck.push(new Card(SUIT_VALUES[suit], CARD_VALUES[card]));
       });
     });
 

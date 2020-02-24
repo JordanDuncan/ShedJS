@@ -34,7 +34,7 @@ class Hand {
     if (index === -1) {
       return null;
     } else {
-      return this.cards.splice(index, 1);
+      return this.cards.splice(index, 1)[0];
     }
   }
 }
