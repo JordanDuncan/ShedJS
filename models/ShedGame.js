@@ -15,6 +15,8 @@ class ShedGame {
 
     /** @type {Object.<string, ShedPlayer>} */
     this.players = {};
+    this.playerList = players;
+
     players.forEach(player => {
       this.players[player] = new ShedPlayer();
     });
@@ -29,7 +31,7 @@ class ShedGame {
     // choose how many cards per player
     // 6 for bottom layer, 3 for 5 players, 4 for 4 players, 5 for 3 or less players
     let cardsPerPlayer = 6;
-    let numberOfPlayers = Object.keys(this.players).length;
+    let numberOfPlayers = this.playerList.length;
 
     if (numberOfPlayers === 5) {
       cardsPerPlayer += 3;
@@ -43,17 +45,17 @@ class ShedGame {
 
     let lowestCardPlayer = {
       card: new Card("D", "A"),
-      player: Object.keys(this.players)[0]
+      player: this.playerList[0]
     };
 
     for (let i = 0; i < cardsPerPlayer; i++) {
-      Object.keys(this.players).forEach(playerName => {
+      this.playerList.forEach(playerName => {
         const player = this.players[playerName];
         const card = this.deck.takeTop();
 
-        if (i < 6) {
+        if (i < this.playerList.length * 2) {
           // if first 6 cards, put onto bottom layer
-          player.bottomCards[i % 3].push(card);
+          player.bottomCards[i % this.playerList.length].push(card);
         } else {
           // if this card is lower, make this player the new starter
           if (lowestCardPlayer.card.compareTo(card) < 0) {
@@ -111,6 +113,16 @@ class ShedGame {
     this.inPlay = new Stack();
   }
 
+  nextPlayer() {
+    const playerIndex = this.playerList.indexOf(this.activePlayer);
+
+    if (playerIndex === this.playerList.length - 1) {
+      this.activePlayer = this.playerList[0];
+    } else {
+      this.activePlayer = this.playerList[playerIndex + 1];
+    }
+  }
+
   printGameState() {
     console.log("- Game State --------");
     console.log(`🔥 Burn Pile (${this.burn.depth} cards)`);
@@ -122,7 +134,7 @@ class ShedGame {
     }
 
     console.log("");
-    Object.keys(this.players).forEach(playerName => {
+    this.playerList.forEach(playerName => {
       const player = this.players[playerName];
 
       console.log(
