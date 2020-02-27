@@ -1,3 +1,9 @@
+const {
+  CARD_VALUES,
+  SUIT_VALUES,
+  CARD_PROPERTY_VALUES
+} = require("../lib/consts");
+
 const Card = require("./Card");
 
 class Stack {
@@ -6,6 +12,7 @@ class Stack {
    * @param {Array<Card>} cards
    */
   constructor(cards) {
+    /** @type {Array<Card>} */
     this.cards = cards || [];
   }
 
@@ -25,7 +32,27 @@ class Stack {
    * @return {Card}
    */
   get top() {
-    return this.cards.length ? this.cards[0] : null;
+    return this.cards.length ? this.cards[this.cards.length - 1] : null;
+  }
+
+  /**
+   * Get top card discarding any invisible cards
+   * @return {Card}
+   */
+  get topVisible() {
+    if (this.cards.length > 0) {
+      for (let i = this.cards.length - 1; i >= 0; i--) {
+        if (
+          [CARD_PROPERTY_VALUES.SKIP, CARD_PROPERTY_VALUES.REVERSE].indexOf(
+            this.cards[i].property
+          ) === -1
+        ) {
+          return this.cards[i];
+        }
+      }
+    }
+
+    return null;
   }
 
   takeTop() {
@@ -39,6 +66,10 @@ class Stack {
   combine(stack) {
     this.addCards(stack.cards);
     return this;
+  }
+
+  clear() {
+    this.cards = [];
   }
 }
 

@@ -1,9 +1,30 @@
-const { CARD_VALUES, SUIT_VALUES } = require("../lib/consts");
+const {
+  CARD_VALUES,
+  SUIT_VALUES,
+  CARD_PROPERTY_VALUES
+} = require("../lib/consts");
 
 class Card {
   constructor(suit, value) {
     this.suit = suit;
     this.value = value;
+
+    this.property = null;
+
+    switch (value) {
+      case CARD_VALUES["2"]:
+        this.property = CARD_PROPERTY_VALUES.RESET;
+        break;
+      case CARD_VALUES["7"]:
+        this.property = CARD_PROPERTY_VALUES.SKIP;
+        break;
+      case CARD_VALUES["10"]:
+        this.property = CARD_PROPERTY_VALUES.BURN;
+        break;
+      case CARD_VALUES["JOKER"]:
+        this.property = CARD_PROPERTY_VALUES.REVERSE;
+        break;
+    }
   }
 
   /**
@@ -13,13 +34,28 @@ class Card {
    */
   compareTo(card) {
     return (
-      Object.keys(CARD_VALUES).indexOf(card.value) -
-      Object.keys(CARD_VALUES).indexOf(this.value)
+      Object.values(CARD_VALUES).indexOf(card.value) -
+      Object.values(CARD_VALUES).indexOf(this.value)
     );
   }
 
+  /**
+   * Check if this card can be played on another one
+   * @param {Card} card card to check if this can play
+   * @returns {boolean}
+   */
+  canPlayOn(card) {
+    if (this.property !== null) {
+      return true;
+    }
+
+    return this.compareTo(card) <= 0;
+  }
+
   toString() {
-    return `${this.value}${this.suit}`;
+    return this.value !== CARD_VALUES["JOKER"]
+      ? `${this.value}${this.suit}`
+      : `JKR`;
   }
 }
 

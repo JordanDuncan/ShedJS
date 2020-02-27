@@ -15,6 +15,7 @@ class Hand {
    */
   addCards(cards) {
     this.cards = [...this.cards, ...cards];
+    this._sort();
   }
 
   /**
@@ -23,6 +24,7 @@ class Hand {
    */
   removeCard(card) {
     let index = -1;
+    let cardToRe;
 
     for (var i = 0, l = this.cards.length; i < l; i++) {
       if (card === this.cards[i]) {
@@ -34,8 +36,14 @@ class Hand {
     if (index === -1) {
       return null;
     } else {
-      return this.cards.splice(index, 1)[0];
+      this.cards.splice(index, 1);
+      this._sort();
+      return card;
     }
+  }
+
+  _sort() {
+    this.cards = this.cards.sort((a, b) => b.compareTo(a));
   }
 }
 
