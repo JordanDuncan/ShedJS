@@ -4,10 +4,14 @@ const {
   CARD_PROPERTY_VALUES
 } = require("../lib/consts");
 
+const uuid = require("uuid/v4");
+
 class Card {
-  constructor(suit, value) {
+  constructor(suit, value, id) {
     this.suit = suit;
     this.value = value;
+
+    this.id = id || uuid();
 
     this.property = null;
 

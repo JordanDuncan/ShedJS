@@ -12,7 +12,7 @@ const CARD_VALUES = {
   QUEEN: "Q",
   KING: "K",
   ACE: "A",
-  JOKER: "JOKER"
+  JOKER: "!"
 };
 
 const SUIT_VALUES = { HEART: "H", DIAMOND: "D", CLUB: "C", SPADE: "S" };

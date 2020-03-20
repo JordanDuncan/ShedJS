@@ -1,0 +1,30 @@
+@import "../../styles/_variables.scss";
+
+.card {
+  height: 100px;
+  width: 70px;
+  border-radius: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  position: relative;
+
+  .card__value {
+    margin: 1px 0 0 6px;
+    font-size: 28px;
+  }
+
+  .card__icon {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+  }
+}
+
+.card--red {
+  color: $red;
+}
+
+.card--facedown {
+  background-color: brown;
+  border: 1px solid darken($color: brown, $amount: 0.5);
+}

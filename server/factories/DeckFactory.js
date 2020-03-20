@@ -27,8 +27,8 @@ class DeckFactory {
     });
 
     if (includeJokers) {
-      deck.push(new Card(null, "JOKER"));
-      deck.push(new Card(null, "JOKER"));
+      deck.push(new Card(null, CARD_VALUES.JOKER));
+      deck.push(new Card(null, CARD_VALUES.JOKER));
     }
 
     shuffle(deck);

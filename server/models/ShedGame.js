@@ -2,6 +2,9 @@ const DeckFactory = require("../factories/DeckFactory");
 const Stack = require("../models/Stack");
 const ShedPlayer = require("../models/ShedPlayer");
 const Card = require("../models/Card");
+
+const GameUtils = require("../lib/GameUtils");
+
 const {
   CARD_VALUES,
   SUIT_VALUES,
@@ -14,7 +17,8 @@ class ShedGame {
    * Create a new Shed game
    * @param {Array<string>} players Array of player names
    */
-  constructor(players) {
+  constructor(id, players) {
+    this.id = id;
     this.deck = DeckFactory.constructNewDeck(true);
     this.inPlay = new Stack();
     this.burn = new Stack();
@@ -28,6 +32,8 @@ class ShedGame {
       this.players[player.id] = player;
       this.playerList.push(player.id);
     });
+
+    this.subscribers = [];
 
     this.cardsInHand = 3;
 
@@ -86,6 +92,8 @@ class ShedGame {
 
     // set starter player
     this.activePlayerId = lowestCardPlayer.player;
+
+    this.sendGameStateToSubscribers();
 
     return this;
   }
@@ -178,6 +186,8 @@ class ShedGame {
       this._nextPlayer();
     }
 
+    this.sendGameStateToSubscribers();
+
     return true;
   }
 
@@ -187,6 +197,8 @@ class ShedGame {
 
       players[player].addCards([card]);
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   /**
@@ -200,11 +212,15 @@ class ShedGame {
     if (movePlayer) {
       this._previousPlayer();
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   burnPlayPile() {
     this.burn.combine(this.inPlay);
     this.inPlay.clear();
+
+    this.sendGameStateToSubscribers();
   }
 
   _nextPlayer() {
@@ -213,6 +229,8 @@ class ShedGame {
     } else {
       this._movePlayerForward();
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   _previousPlayer() {
@@ -221,6 +239,8 @@ class ShedGame {
     } else {
       this._movePlayerBackward();
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   _movePlayerForward() {
@@ -231,6 +251,8 @@ class ShedGame {
     } else {
       this.activePlayerId = this.playerList[playerIndex + 1];
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   _movePlayerBackward() {
@@ -241,6 +263,8 @@ class ShedGame {
     } else {
       this.activePlayerId = this.playerList[playerIndex - 1];
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   get topVisible() {
@@ -262,6 +286,8 @@ class ShedGame {
     } else {
       player.hand.addCards(cardsPlaying);
     }
+
+    this.sendGameStateToSubscribers();
   }
 
   printGameState() {
@@ -281,7 +307,7 @@ class ShedGame {
       const player = this.players[playerId];
 
       console.log(
-        `${playerId === this.activePlayerId ? "✅" : "👨‍🚀"} Player ${
+        `${playerId === this.activePlayerId ? "✅" : "👨‍"} Player ${
           player.name
         } (${player.id})`
       );
@@ -308,6 +334,19 @@ class ShedGame {
           .padStart(4, " ")}`
       );
       console.log("");
+    });
+  }
+
+  /**
+   * SOCKET CONNECTION METHODS
+   */
+  addSubscriber(socket) {
+    this.subscribers.push(socket);
+  }
+
+  sendGameStateToSubscribers() {
+    this.subscribers.forEach(subscriber => {
+      subscriber.emit("GAME_STATE", GameUtils.getPublicGameStateFromGame(this));
     });
   }
 }
