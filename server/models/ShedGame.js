@@ -224,7 +224,7 @@ class ShedGame {
 
     if (moveValue === MOVE_VALUES.REVERSE) {
       // reverse play order
-      this.playReversed = true;
+      this.playReversed = !this.playReversed;
     }
 
     if (moveValue === MOVE_VALUES.BURN) {
@@ -237,12 +237,12 @@ class ShedGame {
           }`
         );
         burnStack.addCards(inPlayStack.cards);
+
+        // remove any reverse rule if burning deck
+        this.playReversed = false;
       }
 
       inPlayStack.clear();
-
-      // remove any reverse rule if burning deck
-      this.playReversed = false;
     }
 
     return moveValue;
@@ -294,6 +294,8 @@ class ShedGame {
 
     if (moveValue !== MOVE_VALUES.BURN) {
       this._nextPlayer();
+    } else {
+      this.playReversed = false;
     }
 
     this.sendGameStateToSubscribers();
@@ -345,6 +347,8 @@ class ShedGame {
     });
 
     this.inPlay.clear();
+
+    this.playReversed = false;
 
     this.sendGameStateToSubscribers();
     this.sendGameStateToPlayers();
@@ -489,6 +493,8 @@ class ShedGame {
           this.playersOut[playersIn[0].id] =
             Object.keys(this.playersOut).length + 1;
           this.status = "COMPLETE";
+        } else if (!this.activePlayer.inPlay) {
+          this._previousPlayer();
         }
       }
     } else {

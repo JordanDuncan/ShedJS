@@ -42,6 +42,7 @@ function getPublicGameStateFromGame(game) {
       status: player.status,
       name: player.name,
       inPlay: player.inPlay,
+      cards: player.hand.cards.length,
       bottomCards: player.bottomCards
         .map(cardPile => {
           let cardToReturn = null;

@@ -26,7 +26,7 @@ const Table = () => {
   ];
 
   (game.players || []).forEach((player, i) => {
-    playerSections[i % 4].push(game.players[i % 4]);
+    playerSections[i % 4].push(game.players[i]);
   });
 
   const renderPlayer = useCallback(
@@ -37,7 +37,8 @@ const Table = () => {
         }`}
         key={player.id}
       >
-        {player.name} {player.status === "PENDING" ? "(Waiting)" : ""}
+        {player.name}{" "}
+        {player.status === "PENDING" ? "(Waiting)" : `(${player.cards})`}
         {player.id === game.activePlayer ? " ✅" : ""}
         <div className="player__bottom-cards">
           {(player.bottomCards || []).map((card, i) => (
@@ -139,10 +140,10 @@ const Table = () => {
       <div className="table__hoz table--top">
         {playerSections[0].map(renderPlayer)}
       </div>
-      <div className="table__hoz table--bottom">
+      <div className="table__ver table--left">
         {playerSections[1].map(renderPlayer)}
       </div>
-      <div className="table__ver table--left">
+      <div className="table__hoz table--bottom">
         {playerSections[2].map(renderPlayer)}
       </div>
       <div className="table__ver table--right">
