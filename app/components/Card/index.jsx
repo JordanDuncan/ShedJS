@@ -17,16 +17,18 @@ const ICON_WIDTH = 30;
  * @param {Card} props.card
  */
 const Card = ({ card }) => {
+  const isVisible = card && card.faceUp;
+
   return (
     <div
-      className={`card ${card === null ? "card--facedown" : ""} ${
-        card !== null &&
+      className={`card ${!isVisible ? "card--facedown" : ""} ${
+        isVisible &&
         [SUIT_VALUES.DIAMOND, SUIT_VALUES.HEART].indexOf(card.suit) > -1
           ? "card--red"
           : "card--black"
       }`}
     >
-      {card !== null && (
+      {isVisible && (
         <>
           <div className="card__value">{card.value}</div>
           <div className="card__icon">

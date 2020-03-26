@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "start:server": "nodemon index.js",
+    "start:server": "nodemon index.js --config nodemon.json | pino-pretty -c -t",
     "start:client": "parcel app/index.html",
     "build:client": "parcel build app/index.html"
   },
@@ -20,11 +20,14 @@
     "express": "^4.17.1",
     "faker": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
+    "node-cron": "^2.0.3",
     "parcel": "^1.12.4",
     "pino": "^5.17.0",
+    "pino-pretty": "^3.6.1",
     "pouchdb": "^7.2.1",
     "pouchdb-adapter-memory": "^7.2.1",
     "react": "^16.13.0",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.13.0",
     "react-inlinesvg": "^1.2.0",
     "react-router-dom": "^5.1.2",

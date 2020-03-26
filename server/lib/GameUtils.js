@@ -1,4 +1,4 @@
-// const singletons = require("./singletons");
+const GamesManager = require("./GamesManager");
 
 /** @typedef {Object} Card
  * @property {Null} property
@@ -19,12 +19,18 @@
  * @property {Object.<String, PlayerState>} players
  */
 
+/**
+ *
+ * @param {ShedGame} game game
+ */
 function getPublicGameStateFromGame(game) {
-  console.log(game.deck);
   const returnState = {
+    status: game.status || "ACTIVE",
     inPlay: game.inPlay.cards,
     burn: game.burn.cards,
-    deck: game.deck.cards.length > 0,
+    deck: game.deck.cards.length,
+    activePlayer: game.activePlayerId,
+    playersOut: game.playersOut,
     players: {}
   };
 
@@ -33,14 +39,25 @@ function getPublicGameStateFromGame(game) {
 
     returnState.players[playerId] = {
       id: player.id,
+      status: player.status,
       name: player.name,
+      inPlay: player.inPlay,
       bottomCards: player.bottomCards
         .map(cardPile => {
-          if (!cardPile || cardPile.length === 0) {
-            return null;
-          } else {
-            return cardPile[0];
+          let cardToReturn = null;
+
+          if (cardPile && cardPile.length > 0) {
+            cardToReturn = { ...cardPile[0] };
           }
+
+          // if face down, remove suit and value
+          if (cardToReturn && !cardToReturn.faceUp) {
+            cardToReturn.suit = null;
+            cardToReturn.value = null;
+            cardToReturn.property = null;
+          }
+
+          return cardToReturn;
         })
         .filter(card => card !== null)
     };
@@ -55,11 +72,9 @@ function getPublicGameStateFromGame(game) {
  * @returns {PublicGameState}
  */
 function getPublicGameState(gameId) {
-  const singletons = require("./singletons");
-
-  if (gameId && singletons.GAMES[gameId]) {
+  if (gameId && GamesManager.GAMES[gameId]) {
     // get state
-    const gameState = singletons.GAMES[gameId];
+    const gameState = GamesManager.GAMES[gameId];
 
     return getPublicGameStateFromGame(gameState);
   } else {

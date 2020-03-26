@@ -4,3 +4,17 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
+
+h2 {
+  color: white;
+}
+
+input:not([type="submit"]):not([type="file"]) {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgba($color: white, $alpha: 0.8);
+}

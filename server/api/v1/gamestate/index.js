@@ -1,4 +1,3 @@
-const singletons = require("../../../lib/singletons");
 const GameUtils = require("../../../lib/GameUtils");
 
 module.exports = (req, res) => {

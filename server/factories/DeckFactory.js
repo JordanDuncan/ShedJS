@@ -15,20 +15,20 @@ class DeckFactory {
   constructNewDeck(includeJokers = false) {
     const deck = [];
 
-    Object.keys(CARD_VALUES).forEach(card => {
+    Object.values(CARD_VALUES).forEach(card => {
       // dont add jokers in this look, add later if desired
       if (card === CARD_VALUES.JOKER) {
         return;
       }
 
-      Object.keys(SUIT_VALUES).forEach(suit => {
-        deck.push(new Card(SUIT_VALUES[suit], CARD_VALUES[card]));
+      Object.values(SUIT_VALUES).forEach(suit => {
+        deck.push(new Card(suit, card, null, false));
       });
     });
 
     if (includeJokers) {
-      deck.push(new Card(null, CARD_VALUES.JOKER));
-      deck.push(new Card(null, CARD_VALUES.JOKER));
+      deck.push(new Card(null, CARD_VALUES.JOKER, null, false));
+      deck.push(new Card(null, CARD_VALUES.JOKER, null, false));
     }
 
     shuffle(deck);

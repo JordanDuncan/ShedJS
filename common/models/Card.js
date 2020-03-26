@@ -7,9 +7,10 @@ const {
 const uuid = require("uuid/v4");
 
 class Card {
-  constructor(suit, value, id) {
+  constructor(suit, value, id, faceUp = true) {
     this.suit = suit;
     this.value = value;
+    this.faceUp = faceUp;
 
     this.id = id || uuid();
 
@@ -60,6 +61,10 @@ class Card {
     return this.value !== CARD_VALUES["JOKER"]
       ? `${this.value}${this.suit}`
       : `JKR`;
+  }
+
+  set visible(visible) {
+    this.faceUp = visible;
   }
 }
 

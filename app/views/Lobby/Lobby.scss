@@ -1,0 +1,22 @@
+.lobby {
+  text-align: center;
+  .button {
+    margin-top: 20px;
+  }
+}
+
+.lobby__player {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: rgba($color: #000000, $alpha: 0.2);
+  color: white;
+  border-radius: 5px;
+  width: 200px;
+  text-align: left;
+}
+
+.lobby__waiting {
+  margin-top: 20px;
+  color: white;
+  opacity: 0.8;
+}

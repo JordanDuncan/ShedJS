@@ -24,10 +24,9 @@ class Hand {
    */
   removeCard(card) {
     let index = -1;
-    let cardToRe;
 
     for (var i = 0, l = this.cards.length; i < l; i++) {
-      if (card === this.cards[i]) {
+      if (card.id === this.cards[i].id) {
         index = i;
         break;
       }

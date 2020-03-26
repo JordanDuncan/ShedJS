@@ -1,37 +1,49 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useContext
+} from "react";
 import Player from "../models/Player";
 import Card from "../models/Card";
 import faker from "faker";
 import io from "socket.io-client";
 
-import { API_URL } from "../lib/config";
-
 import { CARD_VALUES, SUIT_VALUES } from "../lib/consts";
+import { useSocket } from "../hooks";
+import { useHistory } from "react-router-dom";
 
 const GameContext = React.createContext();
 
 const GameContextProvider = ({ children }) => {
+  const socket = useSocket();
+
+  const history = useHistory();
+
   const [gameId, setGameId] = useState(null);
-  const [gameToken, setGameToken] = useState(null);
+  const [me, setMe] = useState(null);
+  const [page, setPage] = useState(null); // LOBBY, TABLE, HAND
+  const [status, setStatus] = useState("LOADING"); //LOADING, WAITING, ACTIVE
   const [players, setPlayers] = useState([]);
+  const [lobbyPlayers, setLobbyPlayers] = useState([]);
   const [inPlay, setInPlay] = useState([]);
   const [burn, setBurn] = useState([]);
   const [deck, setDeck] = useState(false);
-
-  console.log(API_URL);
-
-  useEffect(() => {
-    if (gameToken) {
-      // create socket
-    } else {
-      // remove socket
-    }
-  }, [gameToken]);
+  const [activePlayer, setActivePlayer] = useState(null);
 
   useEffect(() => {
-    const socket = io(API_URL, { autoConnect: false });
-
     socket.on("GAME_STATE", data => {
+      setPage("TABLE");
+
+      if (data.id) {
+        setGameId(data.id);
+      }
+
+      if (data.status) {
+        setStatus(data.status);
+      }
+
       if (data.players) {
         setPlayers(Object.values(data.players));
       }
@@ -47,33 +59,61 @@ const GameContextProvider = ({ children }) => {
       if (data.inPlay) {
         setInPlay(data.inPlay);
       }
+
+      if (data.activePlayer) {
+        setActivePlayer(data.activePlayer);
+      }
     });
 
-    socket.open();
+    socket.on("LOBBY_STATE", data => {
+      setPage("LOBBY");
 
-    socket.emit("SUBSCRIBE_TO_GAME", { gameId: "ABCD" });
+      if (data.id) {
+        setGameId(data.id);
+      }
+
+      if (data.activePlayer) {
+        setActivePlayer(data.activePlayer);
+      }
+
+      if (data.players) {
+        setLobbyPlayers(data.players);
+      }
+
+      if (data.me) {
+        setMe(data.me);
+      }
+    });
+
+    socket.on("REDIRECT", data => {
+      if (data.path) {
+        history.push(data.path);
+      }
+    });
   }, []);
 
-  const playCard = useCallback(() => {
-    let newPlayers = [...players];
-
-    newPlayers[0].bottomCards[1] = null;
-
-    setPlayers(newPlayers);
-  });
+  useEffect(() => {
+    if (page === "LOBBY" && gameId) {
+      history.push(`/lobby/${gameId}`);
+    } else if (page === "TABLE" && gameId) {
+      history.push(`/table/${gameId}`);
+    }
+  }, [page, gameId]);
 
   return (
     <GameContext.Provider
       value={{
         // values
+        status,
         players,
+        lobbyPlayers,
         burn,
         deck,
         inPlay,
+        activePlayer,
+        me,
         // functions
-        setGameId,
-        setGameToken,
-        playCard
+        setGameId
       }}
     >
       {children}
