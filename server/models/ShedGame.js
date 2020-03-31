@@ -222,7 +222,7 @@ class ShedGame {
       moveValue = MOVE_VALUES.REVERSE;
     }
 
-    if (moveValue === MOVE_VALUES.REVERSE) {
+    if (moveValue === MOVE_VALUES.REVERSE && burnStack) {
       // reverse play order
       this.playReversed = !this.playReversed;
     }
