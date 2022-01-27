@@ -64,9 +64,8 @@ const Hand = () => {
         .filter(card => !!card)
         .map(card => (
           <div
-            className={`hand__card ${
-              selectedCards.indexOf(card.id) > -1 ? "hand__card--selected" : ""
-            }`}
+            className={`hand__card ${selectedCards.indexOf(card.id) > -1 ? "hand__card--selected" : ""
+              }`}
             onClick={() => toggleCardInSelectedCards(card.id)}
           >
             <Card card={card} />
@@ -75,22 +74,6 @@ const Hand = () => {
     },
     [selectedCards]
   );
-
-  // vibrate phone if its now your turn
-  useEffect(() => {
-    if (game.activePlayer === game.playerId) {
-      // enable vibration support
-      navigator.vibrate =
-        navigator.vibrate ||
-        navigator.webkitVibrate ||
-        navigator.mozVibrate ||
-        navigator.msVibrate;
-
-      if (navigator.vibrate) {
-        navigator.vibrate([200]);
-      }
-    }
-  }, [game.activePlayer]);
 
   let message = "";
 
@@ -117,11 +100,10 @@ const Hand = () => {
         <div class="hand__id">{game.gameId}</div>
       </div>
       <div
-        className={`hand__cards ${
-          game.status === "ACTIVE" && game.playerId !== game.activePlayer
-            ? "hand__cards--inactive"
-            : ""
-        }`}
+        className={`hand__cards ${game.status === "ACTIVE" && game.playerId !== game.activePlayer
+          ? "hand__cards--inactive"
+          : ""
+          }`}
       >
         <div className="hand__cards-inner">
           {!game.playerPosition ? (

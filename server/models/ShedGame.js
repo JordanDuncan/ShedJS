@@ -43,6 +43,8 @@ class ShedGame {
 
     this.playReversed = false;
 
+    this.lastMoveTime = Date.now();
+
     if (players) {
       players.forEach(playerName => {
         this.addPlayer(null, playerName);
@@ -225,6 +227,7 @@ class ShedGame {
     if (moveValue === MOVE_VALUES.REVERSE && burnStack) {
       // reverse play order
       this.playReversed = !this.playReversed;
+      this.postMessage("Joker played, play direction reversed!");
     }
 
     if (moveValue === MOVE_VALUES.BURN) {
@@ -254,6 +257,8 @@ class ShedGame {
    * @returns {boolean}
    */
   playCards(cards) {
+    this.lastMoveTime = Date.now();
+
     // validate moves
     let fakeInPlay = new Stack().combine(this.inPlay);
     let validMove = true;

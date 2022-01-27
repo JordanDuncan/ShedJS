@@ -3,7 +3,12 @@ const express = require("express");
 const app = express();
 
 const server = http.createServer(app);
-const io = require("socket.io").listen(server);
+const { Server } = require("socket.io");
+const io = new Server(server, {  
+  cors: {
+    origin: ["https://shed.dncn.dev", "http://localhost:1234"],
+  }
+});
 
 const cors = require("cors");
 const port = 3000;
@@ -49,7 +54,7 @@ io.on("connection", socket => {
 
   socket.on("CREATE_GAME", data => {
     logger.info(`${data.name} is creating a new game...`);
-    // create new waiting game and add user as player
+    // create new waiting game
     const game = new WaitingGame();
 
     GamesManager.WAITING_GAMES[game.id] = game;

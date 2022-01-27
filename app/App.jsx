@@ -28,7 +28,7 @@ const App = () => {
               <Route path="/lobby/:id">
                 <Lobby />
               </Route>
-              <Route path="/join">
+              <Route path="/join/:id?">
                 <Join />
               </Route>
               <Route path="/">

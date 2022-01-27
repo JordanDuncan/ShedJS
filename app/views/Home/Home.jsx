@@ -22,13 +22,14 @@ const Home = () => {
     if (waitingForGame) {
       socket.emit("CREATE_GAME", { name });
     }
+
     socket.on("CREATED_GAME", data => {
       if (waitingForGame) {
         setWaitingForGame(false);
 
         // game we requestred has been created, join it.
         // GameContext will pick it up from here
-        history.push(`/lobby/${data.id}`);
+        history.push(`/join/${data.id}`);
       }
     });
   }, [waitingForGame]);

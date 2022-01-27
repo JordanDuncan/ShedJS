@@ -2,26 +2,24 @@ import React, { useState, useCallback } from "react";
 
 import "./Join.scss";
 import Button from "../../components/Button";
-import { useHistory } from "react-router-dom";
-import { useSocket } from "../../hooks";
-import { useCookies } from "react-cookie";
+import { useHistory, useParams } from "react-router-dom";
 
 const Join = () => {
-  const [gameId, setGameId] = useState("");
+  const { id } = useParams();
+  const [gameId, setGameId] = useState(id || "");
   const history = useHistory();
-  const socket = useSocket();
-  const [cookies] = useCookies(["shed-name"]);
+
+  const setGameIdSafely = (value) => {
+    setGameId(value.toUpperCase().replace(/[^A-Z0-9]/g, ""))
+  }
 
   const joinGame = useCallback(() => {
-    // socket.emit("JOIN_GAME", { gameId: gameId, name: cookies["shed-name"] });
     history.push(`/lobby/${gameId}`);
   }, [gameId]);
 
   const goToTable = useCallback(() => {
     history.push(`/table/${gameId}`);
   }, [gameId]);
-
-  const validGameId = true;
 
   return (
     <div className="join">
@@ -31,7 +29,7 @@ const Join = () => {
         className="join__input"
         placeholder="Game ID"
         value={gameId}
-        onChange={e => setGameId(e.target.value)}
+        onChange={e => setGameIdSafely(e.target.value)}
       ></input>
       <div className="join__buttons">
         <Button disabled={!gameId} onClick={joinGame}>

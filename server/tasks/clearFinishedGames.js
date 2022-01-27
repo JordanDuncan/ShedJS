@@ -4,7 +4,7 @@ const clearFinishedGames = () => {
   Object.keys(GamesManager.GAMES).forEach(gameId => {
     const game = GamesManager.GAMES[gameId];
 
-    if (game.status === "COMPLETE") {
+    if (game.status === "COMPLETE" || (game.lastMoveTime + 3000000) < Date.now()) {
       delete GamesManager.GAMES[gameId];
     }
   });
